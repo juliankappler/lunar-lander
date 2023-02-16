@@ -12,9 +12,9 @@ In the following, we first list the files contained in this repository and expla
 
 ## Files and usage
 
-* [agent_class.py](https://github.com/juliankappler/lunar-lander/blob/main/agent_class.py): In this python file we implement the agent class which, which we use both for training an agent and acting with the trained agent
-* [train and visualize agent.ipynb](https://github.com/juliankappler/lunar-lander/blob/main/train%20and%20visualize%20agent.ipynb): In this Jupyter notebook we train an agent, and subsequently create a gameplay video. The video at the beginning of this readme file was created with this notebook
-* [train_agent.py](https://github.com/juliankappler/lunar-lander/blob/main/train_agent.py): In this python script we train an agent, and save both the trained agent parameters, as well as its training statistics to the disk
+* [agent_class.py](agent_class.py): In this python file we implement the agent class which, which we use both for training an agent and acting with the trained agent
+* [train and visualize agent.ipynb](train%20and%20visualize%20agent.ipynb): In this Jupyter notebook we train an agent, and subsequently create a gameplay video. The video at the beginning of this readme file was created with this notebook
+* [train_agent.py](train_agent.py): In this python script we train an agent, and save both the trained agent parameters, as well as its training statistics to the disk
 
 ## Comparison: deep Q-learning vs. double deep Q-learning
 
