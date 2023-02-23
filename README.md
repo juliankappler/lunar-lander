@@ -30,7 +30,7 @@ Here is a plot showing the distribution of the episodes needed for training for 
 
 ![training_n_episodes](https://user-images.githubusercontent.com/37583039/220933734-8c995abf-b963-473b-9c06-7488191c19c9.png)
 
-We observe that the training for the two scenarios with soft update proceeds faster than for the DQN algorithm with hard update. Note that for the DQN algorithm with hard update, 7 of the 500 trainings did not fulfill our stopping criterion within 10000 environment episodes of collecting training data and were thus stopped as unsuccessful (1.4% failure rate). The plot above only considers the 493 successful training instances.
+We observe that the training for the two scenarios with soft update proceeds faster than for the DQN algorithm with hard update. Note that for the DQN algorithm with hard update, 7 of the 500 trainings did not fulfill our stopping criterion within 10000 environment episodes of collecting training data and were thus stopped as unsuccessful (1.4% failure rate); the plot above only considers the 493 successful training instances. For both DQN with soft update and dDQN, all 500 training attemps were successful.
 
 For each successfully trained agent, we run 1000 episodes. Here is a plot of the resulting distribution of all episode returns for each scenario:
 
