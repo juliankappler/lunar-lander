@@ -38,9 +38,12 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--f',type=str, default='my_agent',
                     help='output filename (suffix will be added by script)')
 parser.add_argument('--verbose', action='store_true')
-parser.set_defaults(verbose=False)
 parser.add_argument('--overwrite', action='store_true')
-parser.set_defaults(overwrite=False)
+parser.add_argument('--ddqn', action='store_true') # use this flag to train 
+                                                # via double deep Q-learning
+parser.add_argument('--soft', action=argparse.BooleanOptionalAction) # use this flag to train 
+                                                # via double deep Q-learning
+parser.set_defaults(soft=True)
 args = parser.parse_args()
 
 # Create output filenames
@@ -48,6 +51,8 @@ output_filename = '{0}.tar'.format(args.f)
 output_filename_training_data = '{0}_training_data.h5'.format(args.f)
 verbose=args.verbose
 overwrite=args.overwrite
+ddqn=args.ddqn
+soft=args.soft
 
 if not overwrite:
     # Comment the following out if you want to overwrite
@@ -55,7 +60,7 @@ if not overwrite:
     error_msg = ("File {0} already exists. If you want to overwrite"
         " that file, please restart the script with the flag --overwrite.")
     if os.path.exists(output_filename):
-            raise RuntimeError(error_msg.format(output_filename))
+        raise RuntimeError(error_msg.format(output_filename))
     if os.path.exists(output_filename_training_data):
         raise RuntimeError(error_msg.format(output_filename_training_data))
 
@@ -85,6 +90,10 @@ parameters = {
     # Mandatory parameters
     'N_state':N_state,
     'N_actions':N_actions,
+    #
+    # All the following parameters are optional, and we set them to
+    # their default values here:
+    #
     # neural network topoology (number of neurons at each hidden layer)
     'layers':[64,32],
     # Use deep Q-learning (DQL) or double deep Q-learning (dDQL)?
@@ -106,7 +115,7 @@ parameters = {
         # current status of the training is saved to disk
     #
     'target_net_update_stride':1, # soft update stride for target net
-    'target_net_update_tau':1., # soft update parameter for target net
+    'target_net_update_tau':1e-2, # soft update parameter for target net
     #
     # Parameters for epsilon-greedy policy with epoch-dependent epsilon
     'epsilon':1.0, # initial value for epsilon
@@ -124,7 +133,15 @@ parameters = {
     # ii) mean return over last N_solving_episodes:
     'solving_threshold_mean':250.,
         }
-    
+
+# if the script is started with --ddqn, we use double deep Q-learning
+if ddqn:
+    parameters['doubleDQN'] = True
+# if the script is started with --no-soft, we use hard updates for the
+# target net after each training epoch
+if not soft:
+    parameters['target_net_update_tau'] = 1.
+
 # Instantiate agent class
 my_agent = agent(parameters=parameters)
 

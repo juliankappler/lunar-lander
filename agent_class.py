@@ -136,7 +136,7 @@ class agent():
             # current status of the training is saved to disk
         #
         self.target_net_update_stride = 1 # soft update stride for target net
-        self.target_net_update_tau = 1. # soft update parameter for target net
+        self.target_net_update_tau = 1e-2 # soft update parameter for target net
         #
         # Parameters for epsilon-greedy policy with epoch-dependent epsilon
         self.epsilon = 1.0 # initial value for epsilon
@@ -797,6 +797,7 @@ class agent():
                             'epsiode_returns':episode_rewards,
                             'n_training_epochs':training_epochs,
                             'n_steps_simulated':steps_simulated,
+                            'training_completed':False,
                             }
                 if training_filename != None:
                     self.save_dictionary(dictionary=training_results,
@@ -805,6 +806,7 @@ class agent():
             if training_complete:
                 # we stop if the stopping criterion was met at the end of
                 # the current episode
+                training_results['training_completed'] = True
                 break
         #
         if not training_complete:
@@ -823,5 +825,4 @@ class agent():
         with h5py.File(filename, 'w') as hf:
             for key, value in dictionary.items():
                 hf.create_dataset(str(key), 
-                    data=value, 
-                    chunks=True)
+                    data=value)
