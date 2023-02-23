@@ -8,7 +8,7 @@ https://user-images.githubusercontent.com/37583039/219359191-7988e0dc-b1a4-43cc-
 
 We use the lunar lander implementation from [gymnasium](https://gymnasium.farama.org). For the implementation of deep Q-learning we follow <a href="#ref_1">Ref. [1]</a>, for the implementation of double deep Q-learning we follow <a href="#ref_2">Ref. [2]</a>.
 
-In the following, we [first](#files-and-usage) list the files contained in this repository and explain their usage. We [then](#comparison-deep-q-learning-vs-double-deep-q-learning) compare the training speed and post-training performance of agents trained using deep Q-learning vs. double deep Q-learning, and hard vs. soft update.
+In the following, we [first](#files-and-usage) list the files contained in this repository and explain their usage. We [then](#comparison-deep-q-learning-vs-double-deep-q-learning-and-soft-update-vs-hard-update) compare the training speed and post-training performance of agents trained using deep Q-learning vs. double deep Q-learning, and hard vs. soft update.
 
 ## Files and usage
 
@@ -17,7 +17,7 @@ In the following, we [first](#files-and-usage) list the files contained in this 
 * [train_agent.py](train_agent.py): In this python script we train an agent, and save both the trained agent parameters, as well as its training statistics to the disk
 * [run_agent.py](train_agent.py): In this python script we run episodes for an already trained agent, and save statistics (duration of episodes, return for each episode) to the disk
 * [trained_agents/batch_train_and_run.sh](trained_agents/batch_train_and_run.sh): With this bash script we train 500 agents (via [train_agent.py](train_agent.py)) and subsequently run 1000 episodes for each trained agent (via [run_agent.py](run_agent.py)). The script by default runs 10 processes in parallel.
-* [trained_agents/plot_results.ipynb](trained_agents/plot_results.ipynb): In this Jupyter notebook we analyze the training statistics and performance of the trained agents from [batch_train_and_run.sh](trained_agents/batch_train_and_run.sh), as summarized in [this section](#comparison-deep-q-learning-vs-double-deep-q-learning).
+* [trained_agents/plot_results.ipynb](trained_agents/plot_results.ipynb): In this Jupyter notebook we analyze the training statistics and performance of the trained agents from [batch_train_and_run.sh](trained_agents/batch_train_and_run.sh), as summarized in [this section](#comparison-deep-q-learning-vs-double-deep-q-learning-and-soft-update-vs-hard-update).
 
 ## Comparison: deep Q-learning vs. double deep Q-learning, and soft update vs. hard update
 
