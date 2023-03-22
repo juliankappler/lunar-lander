@@ -9,8 +9,8 @@
 # and runs 1000 episodes of the environment for each trained agent.
 # By default 10 trainings/runs are run in parallel, and both the final models,
 # training statistics, and statistics of the runs are saved to ./data/
-n = 500 # number of agents
-parallelism=10 # number of trainings/runs that are run in parallel
+n=500 # number of agents
+parallelism=8 # number of trainings/runs that are run in parallel
 output_dir=$(pwd)"/data" # output dir
 # 
 # The script assumes that the the agent class agent_class.py and the scripts
@@ -37,15 +37,13 @@ agent_dir='../'
 # Training options #
 ####################
 #
-# There are two options you can set for the training algorithm via flags:
-# 1. By default, the agent is trained via deep Q-learning. You can train the
-#    agent via double deep Q-learning by running the script with flag
-#      bash batch_train_and_run.sh --ddqn
-# 2. By default, the target net of the (double) deep Q-learning algorithm is 
-#    updated via a soft update with tau = 0.01. You can use a hard update for
-#    the target net (meaning that the target net is set to the policy net 
-#    after each training epoch) by running the script with flag 
-#      bash batch_train_and_run.sh --no-soft
+# By default, the agent is trained via an actor-critic learning algorithm
+# with regularized affinities. 
+# You can train the agent via deep Q-learning by running the script with flag
+#   bash batch_train_and_run.sh --dqn
+# of train the agent via double deep Q-learning by running the script with
+# flag
+#   bash batch_train_and_run.sh --ddqn
 #    
 #
 ##########
@@ -54,23 +52,26 @@ agent_dir='../'
 #
 # Naming scheme for the output files for the i-th agent are as follows:
 #
-# 1. For deep Q-learning with soft update:
+# 1. For actor-critic learning:
 #    - parameters of trained model: agent_$i.tar 
 #    - training statistics: agent_$i_training_data.h5 
-#    - episode runs statistics: agent_$i_trajs.tar 
-# 2. For deep Q-learning with hard update:
-#    - parameters of trained model: agent_$i_no-soft.tar 
-#    - training statistics: agent_$i_no-soft_training_data.h5 
-#    - episode runs statistics: agent_$i_no-soft_trajs.tar 
-# 3. For double deep Q-learning with soft update:
-#    - parameters of trained model: agent_$i_ddqn.tar 
-#    - training statistics: agent_$i_ddqn_training_data.h5 
-#    - episode runs statistics: agent_$i_ddqn_trajs.tar 
+#    - training execution time: agent_$i_execution_time.txt 
+#    - episode runs statistics: agent_$i_trajs.tar
+# 2. For deep Q-learning:
+#    - parameters of trained model: agent_dqn_$i.tar 
+#    - training statistics: agent_dqn_$i_training_data.h5 
+#    - training execution time: agent_dqn_$i_execution_time.txt
+#    - episode runs statistics: agent_dqn_$i_trajs.tar 
+# 3. For double deep Q-learning:
+#    - parameters of trained model: agent_ddqn_$i.tar 
+#    - training statistics: agent_ddqn_$i_training_data.h5 
+#    - training execution time: agent_ddqn_$i_execution_time.txt
+#    - episode runs statistics: agent_ddqn_$i_trajs.tar 
 #
 #
 ###################
-# Note on runtime #
-################### 
+# Note on runtime #       UPDATE THIS ONCE YOU HAVE THE DATA!
+###################
 #
 # On my computer, training a single agent on a single CPU takes about 5-30 
 # minutes (depending on algorithm/whether hard and soft updates are used). 
@@ -94,13 +95,15 @@ train=true
 run=true
 while [ "$1" != "" ]; do
   case $1 in
-    -d | --ddqn )
-      flags_train="${flags_train} --ddqn"
-      filename="${filename}_ddqn"
+    -d | --dqn )
+      flags_train="${flags_train} --dqn"
+      flags_run="${flags_train} --dqn"
+      filename="${filename}_dqn"
       ;;
-    --no-soft )
-      flags_train="${flags_train} --no-soft"
-      filename="${filename}_no-soft"
+    -dd | --ddqn )
+      flags_train="${flags_train} --ddqn"
+      flags_run="${flags_train} --ddqn"
+      filename="${filename}_ddqn"
       ;;
     -t | --train-only | --no-run )
       run=false
@@ -138,7 +141,7 @@ run_command () {
 }
 
 # Loop over the number of trainings and run the commands in parallel
-for ((i=1; i <= $n; i++));
+for ((i=1; i <= $n; i++)); do
   # Wait until there are less than $parallelism commands running
   while (( $(jobs -r -p | wc -l) >= $parallelism )); do
     sleep 1

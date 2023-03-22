@@ -3,8 +3,12 @@
 import gymnasium as gym
 import os
 import argparse
+import torch
+import numpy as np
+import itertools 
+import h5py 
 
-from agent_class import *
+import agent_class as agent
 # agent_class defines
 # - class "neural_network"
 # - class "agent"
@@ -41,6 +45,12 @@ parser.add_argument('--verbose', action='store_true')
 parser.set_defaults(verbose=False)
 parser.add_argument('--overwrite', action='store_true')
 parser.set_defaults(overwrite=False)
+parser.add_argument('--dqn', action='store_true') # use this flag to train 
+                                                # via deep Q-learning
+parser.add_argument('--ddqn', action='store_true') # use this flag to train 
+                                                # via double deep Q-learning
+parser.set_defaults(dqn=False)
+parser.set_defaults(ddqn=False)
 args = parser.parse_args()
 
 # Create input and output filenames
@@ -49,6 +59,10 @@ output_filename = '{0}_trajs.tar'.format(args.f)
 N = args.N
 verbose=args.verbose
 overwrite=args.overwrite
+dqn=args.dqn
+ddqn=args.ddqn
+if ddqn:
+    dqn = True
 
 if not overwrite:
     # Comment the following out if you want to overwrite
@@ -59,7 +73,8 @@ if not overwrite:
             raise RuntimeError(error_msg.format(output_filename))
 
 def run_and_save_simulations(env, # environment
-                            input_filename,output_filename,N=1000):
+                            input_filename,output_filename,N=1000,
+                            dqn=False):
     #
     # load trained model
     input_dictionary = torch.load(open(input_filename,'rb'))
@@ -73,7 +88,11 @@ def run_and_save_simulations(env, # environment
     #
     # instantiate agent
     parameters = input_dictionary['parameters']
-    my_agent = agent(parameters=parameters)
+    # Instantiate agent class
+    if dqn:
+        my_agent = agent.dqn(parameters=parameters)
+    else:
+        my_agent = agent.actor_critic(parameters=parameters)
     my_agent.load_state(state=input_dictionary)
     #
     # instantiate environment
@@ -130,4 +149,5 @@ env = gym.make('LunarLander-v2')
 run_and_save_simulations(env=env,
                             input_filename=input_filename,
                             output_filename=output_filename,
-                            N=N)
+                            N=N,
+                            dqn=dqn)
