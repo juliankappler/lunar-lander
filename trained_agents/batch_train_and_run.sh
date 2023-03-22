@@ -70,15 +70,26 @@ agent_dir='../'
 #
 #
 ###################
-# Note on runtime #       UPDATE THIS ONCE YOU HAVE THE DATA!
+# Note on runtime #
 ###################
 #
-# On my computer, training a single agent on a single CPU takes about 5-30 
-# minutes (depending on algorithm/whether hard and soft updates are used). 
-# Thus, an estimate for training 500 agents with 10 CPUs in parallel is
+# On my computer, training a single agent on a single CPU takes on average
+# - ~170 seconds for deep Q-learning
+# - ~280 seconds for the actor-critic algorithm
 #
-#           20 min * 500 / 10 = 1000 min = 16 hours and 40 min.
+# The resulting estimates for training 500 agents with 8 CPUs in parallel are:
+# - For deep Q-learning:
+#           170 seconds * 500 / 8 = 177 min = almost 3 hours
+# - For the actor-critic algorithm:
+#           280 seconds * 500 / 8 = 292 min = almost 5 hours
 #
+# It is easily possible to divide the training into multiple sessions:
+# If you stop the script at any time via ctrl + c in the terminal, then the
+# current trainings will still be completed, but no new trainings will be
+# started.
+# If you restart the script later (without the --overwrite flag!), then all
+# the existing training files will be detected and skipped, so that the script
+# continues right where it was stopped before.
 
 
 # create output directory
