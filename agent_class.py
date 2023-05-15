@@ -8,7 +8,8 @@ import torch
 from torch import nn
 import copy
 import h5py
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cpu") 
+#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 #device = 'mps'
 import warnings
 from torch.distributions import Categorical
